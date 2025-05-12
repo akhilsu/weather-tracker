@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Data Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Weather Data Tracker</h1>
+    <canvas id="weatherChart" width="800" height="400"></canvas>
+
+    <script>
+        // Fetch weather data from the CSV file
+        fetch('daily_weather.csv')
+            .then(response => response.text())
+            .then(csvData => {
+                const rows = csvData.split('\n').slice(1); // Skip header row
+                const labels = [];
+                const temperatures = [];
+                const humidities = [];
+
+                rows.forEach(row => {
+                    const cols = row.split(',');
+                    if (cols.length > 1) {
+                        labels.push(cols[0]); // Date
+                        temperatures.push(parseFloat(cols[2])); // Temperature
+                        humidities.push(parseFloat(cols[3])); // Humidity
+                    }
+                });
+
+                // Create the chart
+                const ctx = document.getElementById('weatherChart').getContext('2d');
+                const weatherChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Temperature (C)',
+                                data: temperatures,
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 2,
+                                fill: false
+                            },
+                            {
+                                label: 'Humidity (%)',
+                                data: humidities,
+                                borderColor: 'rgba(153, 102, 255, 1)',
+                                borderWidth: 2,
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top'
+                            }
+                        }
+                    }
+                });
+            });
+    </script>
+</body>
+</html>
