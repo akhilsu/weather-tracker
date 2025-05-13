@@ -2,37 +2,44 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Weather Data Tracker</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"/>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
+      margin: 0;
+      padding: 0;
       font-family: 'Roboto', sans-serif;
       background: linear-gradient(to right, #e0f7fa, #ffffff);
-      margin: 0;
-      padding: 10px;
       color: #333;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 20px;
     }
 
     h1 {
       text-align: center;
       color: #00796b;
-      font-size: 1.8rem;
+      font-size: 2rem;
+      margin-bottom: 30px;
     }
 
-    .container {
-      max-width: 1000px;
-      margin: auto;
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 60vh; /* makes it responsive */
       background: #fff;
-      padding: 20px;
       border-radius: 12px;
+      padding: 20px;
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    #weatherChart {
-      width: 100% !important;
-      height: auto !important;
     }
 
     .loading {
@@ -42,13 +49,20 @@
       color: #555;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 768px) {
       h1 {
         font-size: 1.5rem;
       }
 
-      .container {
-        padding: 15px;
+      .chart-container {
+        height: 50vh;
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .chart-container {
+        height: 40vh;
       }
     }
   </style>
@@ -57,7 +71,9 @@
   <div class="container">
     <h1>Weather Data Tracker</h1>
     <div id="loading" class="loading">Loading chart data, please wait...</div>
-    <canvas id="weatherChart" style="display: none;"></canvas>
+    <div class="chart-container">
+      <canvas id="weatherChart"></canvas>
+    </div>
   </div>
 
   <script>
@@ -79,7 +95,6 @@
         });
 
         document.getElementById('loading').style.display = 'none';
-        document.getElementById('weatherChart').style.display = 'block';
 
         const ctx = document.getElementById('weatherChart').getContext('2d');
         new Chart(ctx, {
@@ -92,18 +107,20 @@
                 data: temperatures,
                 borderColor: 'rgba(255, 99, 132, 1)',
                 backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                tension: 0.3,
+                tension: 0.4,
                 pointRadius: 3,
-                pointHoverRadius: 5
+                pointHoverRadius: 6,
+                fill: true
               },
               {
                 label: 'Humidity (%)',
                 data: humidities,
                 borderColor: 'rgba(54, 162, 235, 1)',
                 backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                tension: 0.3,
+                tension: 0.4,
                 pointRadius: 3,
-                pointHoverRadius: 5
+                pointHoverRadius: 6,
+                fill: true
               }
             ]
           },
@@ -114,17 +131,22 @@
               legend: {
                 position: 'top'
               },
-              tooltip: {
-                mode: 'index',
-                intersect: false
-              },
               title: {
                 display: true,
-                text: 'Daily Weather Trends',
+                text: 'Daily Temperature and Humidity Trends',
                 font: {
                   size: 16
                 }
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false
               }
+            },
+            interaction: {
+              mode: 'nearest',
+              axis: 'x',
+              intersect: false
             },
             scales: {
               x: {
@@ -137,8 +159,7 @@
                 title: {
                   display: true,
                   text: 'Values'
-                },
-                beginAtZero: false
+                }
               }
             }
           }
