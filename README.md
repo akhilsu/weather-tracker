@@ -22,7 +22,7 @@ Daily weather data is automatically saved in a CSV file (daily_weather.csv).
 This file is version-controlled and updated daily in the GitHub repository.
 
 ⚙️ Full Automation
-Weather data is fetched daily via the [OpenWeatherMap API](https://openweathermap.org/api\).
+Weather data is fetched daily via the [OpenWeatherMap API](https://openweathermap.org/api).
 Automated using GitHub Actions, ensuring updates happen every day without manual intervention.
 
 🌐 Free Hosting on GitHub Pages
