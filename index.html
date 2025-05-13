@@ -1,148 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Data Tracker</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: linear-gradient(to right, #e0f7fa, #fff);
-            margin: 0;
-            padding: 20px;
-            color: #333;
-        }
-        h1 {
-            text-align: center;
-            color: #00796b;
-        }
-        .container {
-            max-width: 1000px;
-            margin: auto;
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        #weatherChart {
-            margin-top: 20px;
-        }
-        .loading {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 18px;
-            color: #555;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weather Data Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 10px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #00796b;
+      font-size: 1.8rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    #weatherChart {
+      width: 100% !important;
+      height: auto !important;
+    }
+
+    .loading {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 1rem;
+      color: #555;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .container {
+        padding: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Weather Data Tracker</h1>
-        <div id="loading" class="loading">Loading chart data, please wait...</div>
-        <canvas id="weatherChart" width="800" height="400" style="display: none;"></canvas>
-    </div>
+  <div class="container">
+    <h1>Weather Data Tracker</h1>
+    <div id="loading" class="loading">Loading chart data, please wait...</div>
+    <canvas id="weatherChart" style="display: none;"></canvas>
+  </div>
 
-    <script>
-        fetch('daily_weather.csv')
-            .then(response => response.text())
-            .then(csvData => {
-                const rows = csvData.trim().split('\n').slice(1); // Skip header
-                const labels = [];
-                const temperatures = [];
-                const humidities = [];
+  <script>
+    fetch('daily_weather.csv')
+      .then(response => response.text())
+      .then(csvData => {
+        const rows = csvData.trim().split('\n').slice(1);
+        const labels = [];
+        const temperatures = [];
+        const humidities = [];
 
-                rows.forEach(row => {
-                    const cols = row.split(',');
-                    if (cols.length > 3) {
-                        labels.push(cols[0]); // Date
-                        temperatures.push(parseFloat(cols[2])); // Temperature
-                        humidities.push(parseFloat(cols[3])); // Humidity
-                    }
-                });
+        rows.forEach(row => {
+          const cols = row.split(',');
+          if (cols.length > 3) {
+            labels.push(cols[0]);
+            temperatures.push(parseFloat(cols[2]));
+            humidities.push(parseFloat(cols[3]));
+          }
+        });
 
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('weatherChart').style.display = 'block';
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('weatherChart').style.display = 'block';
 
-                const ctx = document.getElementById('weatherChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            {
-                                label: 'Temperature (°C)',
-                                data: temperatures,
-                                borderColor: 'rgba(255, 99, 132, 1)',
-                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                tension: 0.3,
-                                pointRadius: 4,
-                                pointHoverRadius: 6
-                            },
-                            {
-                                label: 'Humidity (%)',
-                                data: humidities,
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                                tension: 0.3,
-                                pointRadius: 4,
-                                pointHoverRadius: 6
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        interaction: {
-                            mode: 'index',
-                            intersect: false
-                        },
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                                labels: {
-                                    font: {
-                                        size: 14
-                                    }
-                                }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return `${context.dataset.label}: ${context.formattedValue}`;
-                                    }
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Daily Weather Trends',
-                                font: {
-                                    size: 18
-                                }
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: false,
-                                title: {
-                                    display: true,
-                                    text: 'Values'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Date'
-                                }
-                            }
-                        }
-                    }
-                });
-            })
-            .catch(error => {
-                document.getElementById('loading').innerText = 'Failed to load data.';
-                console.error('Error loading CSV:', error);
-            });
-    </script>
+        const ctx = document.getElementById('weatherChart').getContext('2d');
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Temperature (°C)',
+                data: temperatures,
+                borderColor: 'rgba(255, 99, 132, 1)',
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                tension: 0.3,
+                pointRadius: 3,
+                pointHoverRadius: 5
+              },
+              {
+                label: 'Humidity (%)',
+                data: humidities,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.3,
+                pointRadius: 3,
+                pointHoverRadius: 5
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top'
+              },
+              tooltip: {
+                mode: 'index',
+                intersect: false
+              },
+              title: {
+                display: true,
+                text: 'Daily Weather Trends',
+                font: {
+                  size: 16
+                }
+              }
+            },
+            scales: {
+              x: {
+                title: {
+                  display: true,
+                  text: 'Date'
+                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: 'Values'
+                },
+                beginAtZero: false
+              }
+            }
+          }
+        });
+      })
+      .catch(error => {
+        document.getElementById('loading').innerText = 'Failed to load data.';
+        console.error('Error loading CSV:', error);
+      });
+  </script>
 </body>
 </html>
