@@ -2,7 +2,7 @@ name: Update Weather Data
 
 on:
   schedule:
-    - cron: "0 1 * * *" # Run daily at 1:00 AM UTC
+    - cron: "0 * * * *"  # Runs at the start of every hour (UTC time)
   workflow_dispatch: # Allow manual triggering
 
 jobs:
