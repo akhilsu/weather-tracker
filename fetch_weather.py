@@ -1,9 +1,13 @@
+import os
 import requests
 import pandas as pd
 from datetime import datetime
 
-# OpenWeatherMap API Configuration
-API_KEY = "6cf04c4d7c9f26da44ceea0adb3aa206"    #OpenWeatherMap API key
+# Get the API key from environment variables
+API_KEY = os.getenv("API_KEY")
+if not API_KEY:
+    raise ValueError("API_KEY environment variable not set")
+
 CITY = "Bangalore"                              #City
 URL = f"https://api.openweathermap.org/data/2.5/weather?q={CITY}&appid={API_KEY}&units=metric"
 
